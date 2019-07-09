@@ -22,21 +22,24 @@ import android.content.Context;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    public Button btnSwitch1, btnSwitch2;
+    //public Button btnSwitch[4];
+    //public int state[4] = {2};
+    public  Button btnSwitch[] = new Button[4];
+    public byte state[] = new byte[]{(byte)0x2, (byte)0x2, (byte)0x2, (byte)0x2};
+
     public TextView textState;
     public TextView textTemp;
 
-    public Socket socket;
+    public Socket socket, socketLocal, socketRemote;
 
     public OutputStream out;
     public InputStream in;
     public boolean connectFlag = false;
+    public boolean getDataFlag = false;
 
+    public int connextCnt = 0;
     public String ip; // = "192.168.0.43";
     public int port = 54300;
-
-    public boolean state1 = false;
-    public boolean state2 = false;
 
     byte[] getTemp1 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x01, (byte)0x05, (byte)0x00, (byte)0x00};
     byte[] getBuf1 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x01, (byte)0x03, (byte)0x00, (byte)0x00};
@@ -55,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnSwitch1 = (Button) findViewById(R.id.btn_switch1);
-        btnSwitch2 = (Button) findViewById(R.id.btn_switch2);
+        btnSwitch[1] = (Button) findViewById(R.id.btn_switch1);
+        btnSwitch[2] = (Button) findViewById(R.id.btn_switch2);
         textState = (TextView) findViewById(R.id.text_state);
         textTemp = (TextView) findViewById(R.id.text_dht11);
 
@@ -67,95 +70,131 @@ public class MainActivity extends AppCompatActivity {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+        /*  本地连接 */
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    if (!connectFlag) {
+                        tcp_connect_local();
+                    } else {
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                }
+            }
+        }).start();
+        /*  外网连接 */
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    if (!connectFlag) {
+                        tcp_connect_remote();
+                    } else {
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    if (connectFlag) {
+                        tcp_recv();
+                    } else {
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                }
+            }
+        }).start();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-                String localIP =  getLocalIpAddress();
-                //textState.setText(localIP);
-
-                if (localIP.contains("192.168.0.") == true) {
-                    ip = "192.168.0.43";
-                } else {
+                while(true) {
                     try {
-                        InetAddress addr = java.net.InetAddress.getByName("valderfields.tpddns.cn");
-                        ip = addr.getHostAddress();
+                        if (getDataFlag) {
+                            getDataFlag = false;
+
+                            Thread.sleep(100);
+                            out.write(getTemp1);
+                            Thread.sleep(600);
+                            out.write(getBuf1);
+                            Thread.sleep(600);
+                            out.write(getBuf2);
+                            Thread.sleep(600);
+
+                        } else {
+                            Thread.sleep(100);
+                        }
                     } catch (Exception e) {
-                        e.printStackTrace();
+
                     }
-                }
-
-                try{
-                    socket = new Socket(ip, port);
-                    out = socket.getOutputStream();
-                    in = socket.getInputStream();
-                    connectFlag = true;
-
-                    textState.setText("已连接");
-                    //textState.setBackgroundColor(Color.GREEN);
-
-                    tcp_recv();
-                    //Toast.makeText (MainActivity.this, "已连接",Toast. LENGTH_SHORT ).show();
-                } catch (Exception e){
-                    //Toast.makeText (MainActivity.this, "未连接",Toast. LENGTH_SHORT ).show();
-                    // Log.i("miao","#########################################"+"Exception");
                 }
             }
         }).start();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    /* 等待连接 */
-                    while (!connectFlag) {
-                        Thread.sleep(100);
-                    }
-
-                    out.write(getTemp1);
-                    Thread.sleep(500);
-                    out.write(getBuf1);
-                    Thread.sleep(500);
-                    out.write(getBuf2);
-                    Thread.sleep(500);
-
-                } catch (Exception e){
-
-                }
-            }
-        }).start();
-
-        btnSwitch1.setOnClickListener(new View.OnClickListener() {
+        btnSwitch[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
-                    if (state1) {
-                        out.write(closeBuf1);
-                        btnSwitch1.setBackgroundColor(Color.parseColor("#8C8C8C"));
-                    } else {
-                        out.write(openBuf1);
-                        btnSwitch1.setBackgroundColor(Color.parseColor("#8C8C8C"));
-                    }
-                } catch (Exception e) {
+                if (connectFlag) {
+                    try{
+                        switch (state[1]) {
+                        case 0x0:
+                            out.write(openBuf1);
+                            break;
+                        case 0x1:
+                            out.write(closeBuf1);
+                            break;
+                        case 0x2:
+                            out.write(getBuf1);
+                            break;
+                        }
+                        state[1] = 0x2;
+                        btnSwitch[1].setBackgroundColor(Color.parseColor("#8C8C8C"));
+                    } catch (Exception e) {
 
+                    }
                 }
             }
         });
 
-        btnSwitch2.setOnClickListener(new View.OnClickListener() {
+        btnSwitch[2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
-                    if (state2) {
-                        out.write(closeBuf2);
-                        btnSwitch2.setBackgroundColor(Color.parseColor("#8C8C8C"));
-                    } else {
-                        out.write(openBuf2);
-                        btnSwitch2.setBackgroundColor(Color.parseColor("#8C8C8C"));
-                    }
-                } catch (Exception e) {
+                if (connectFlag) {
+                    try{
+                        switch (state[2]) {
+                        case 0x0:
+                            out.write(openBuf2);
+                            break;
+                        case 0x1:
+                            out.write(closeBuf2);
+                            break;
+                        case 0x2:
+                            out.write(getBuf2);
+                            break;
+                        }
+                        state[2] = 0x2;
+                        btnSwitch[2].setBackgroundColor(Color.parseColor("#8C8C8C"));
+                    } catch (Exception e) {
 
+                    }
                 }
             }
         });
@@ -182,12 +221,91 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    public void tcp_connect() {
+        while(true) {
+            String localIP = getLocalIpAddress();
+            if (localIP.contains("192.168.0.") == true) {
+                ip = "192.168.0.43";
+            } else {
+                try {
+                    InetAddress addr = java.net.InetAddress.getByName("valderfields.tpddns.cn");
+                    ip = addr.getHostAddress();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                socket = new Socket(ip, port);
+                if (socket.isConnected()) {
+                    out = socket.getOutputStream();
+                    in = socket.getInputStream();
+                    connectFlag = true;
+                    getDataFlag = true;
+                    textState.setText("已连接");
+                    break;
+                } else {
+                    Thread.sleep(200);
+                }
+
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    public void tcp_connect_local() {
+        while (true) {
+            try {
+                ip = "192.168.0.43";
+                socketLocal = new Socket(ip, port);
+                if (socketLocal.isConnected()) {
+                    socket = socketLocal;
+                    out = socket.getOutputStream();
+                    in = socket.getInputStream();
+                    connectFlag = true;
+                    getDataFlag = true;
+                    textState.setText("已连接");
+                    break;
+                } else {
+                    Thread.sleep(200);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void tcp_connect_remote() {
+        while(true) {
+            try {
+                InetAddress addr = java.net.InetAddress.getByName("valderfields.tpddns.cn");
+                ip = addr.getHostAddress();
+                socketRemote = new Socket(ip, port);
+                if (socketRemote.isConnected()) {
+                    socket = socketRemote;
+                    out = socket.getOutputStream();
+                    in = socket.getInputStream();
+                    connectFlag = true;
+                    getDataFlag = true;
+                    textState.setText("已连接");
+                    break;
+                } else {
+                    Thread.sleep(200);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     public void tcp_recv() {
-        while (connectFlag) {
-            //mBtnOpen.setText("test");
+        while (true) {
             try {
                 byte[] buf = new byte[128];
                 int len = in.read(buf);
+                //int id;
                 if (len > 0) {
                     if (buf[4] == 0x6) {
                         temp = (float) (buf[7]*10 + buf[8]) / 10;
@@ -202,72 +320,62 @@ public class MainActivity extends AppCompatActivity {
                         });
 
                     } else {
+                        final int id = buf[3];
                         switch (buf[5]) {
                             case 0x0:
-                                if (buf[3] == 0x1) {
-                                    //btnSwitch1.setText("开");
-                                    //btnSwitch1.setBackgroundColor(Color.parseColor("#FFD700"));
                                     runOnUiThread(new Runnable(){
                                         @Override
                                         public void run() {
-                                            btnSwitch1.setText("开");
-                                            btnSwitch1.setBackgroundColor(Color.parseColor("#FFD700"));
+                                            btnSwitch[id].setText("开");
+                                            btnSwitch[id].setBackgroundColor(Color.parseColor("#FFD700"));
                                         }
                                     });
-                                    state1 = false;
-                                } else if (buf[3] == 0x2) {
-                                    //btnSwitch2.setText("开");
-                                    //btnSwitch2.setBackgroundColor(Color.parseColor("#FFD700"));
-                                    runOnUiThread(new Runnable(){
-                                        @Override
-                                        public void run() {
-                                            btnSwitch2.setText("开");
-                                            btnSwitch2.setBackgroundColor(Color.parseColor("#FFD700"));
-                                        }
-                                    });
-                                    state2 = false;
-                                }
+                                    state[id] = 0x0;
                                 break;
                             case 0x1:
-                                if (buf[3] == 0x1) {
-                                    //btnSwitch1.setText("关");
-                                    //btnSwitch1.setBackgroundColor(Color.parseColor("#ADD8E6"));
                                     runOnUiThread(new Runnable(){
                                         @Override
                                         public void run() {
-                                            btnSwitch1.setText("关");
-                                            btnSwitch1.setBackgroundColor(Color.parseColor("#ADD8E6"));
+                                            btnSwitch[id].setText("关");
+                                            btnSwitch[id].setBackgroundColor(Color.parseColor("#ADD8E6"));
                                         }
                                     });
-                                    state1 = true;
-                                } else if (buf[3] == 0x2) {
-                                    //btnSwitch2.setText("关");
-                                    //btnSwitch2.setBackgroundColor(Color.parseColor("#ADD8E6"));
-                                    runOnUiThread(new Runnable(){
-                                        @Override
-                                        public void run() {
-                                            btnSwitch2.setText("关");
-                                            btnSwitch2.setBackgroundColor(Color.parseColor("#ADD8E6"));
-                                        }
-                                    });
-                                    state2 = true;
-                                }
-                                break;
-                            case 0x2:
-                                //btnOpen.setText("断线");
-                                //btnOpen.setBackgroundColor(Color.parseColor("#8C8C8C"));
+                                    state[id] = 0x1;     
                                 break;
                         }
                     }
                 } else {
-                    btnSwitch1.setText("断网");
+                    textState.setText("未连接");
+                    //connectFlag = false;
+                    //socket.close();
+                    break;
                 }
             } catch (Exception e) {
                 Log.i(TAG, "fangying yichang");
                 Log.d(TAG, "fangying yichang");
                 Log.e(TAG, "fangying yichang", e);
-                btnSwitch1.setText("异常");
+                textState.setText("异常");
+                break;
             }
         }
+
+
+        runOnUiThread(new Runnable(){
+            @Override
+            public void run() {
+                btnSwitch[1].setBackgroundColor(Color.parseColor("#8C8C8C"));
+                state[1] = 0x2;
+                btnSwitch[2].setBackgroundColor(Color.parseColor("#8C8C8C"));
+                state[2] = 0x2;
+            }
+        });
+
+        try {
+            socket.close();
+            Thread.sleep(1000);
+        } catch (Exception e) {
+
+        }
+        connectFlag = false;
     }
 }
