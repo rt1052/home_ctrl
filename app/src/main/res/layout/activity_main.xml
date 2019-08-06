@@ -7,21 +7,6 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
-    <Button
-        android:id="@+id/btn_switch2"
-        android:layout_width="0dp"
-        android:layout_height="84dp"
-        android:layout_marginEnd="55dp"
-        android:layout_marginRight="55dp"
-        android:layout_marginBottom="228dp"
-        android:text="开"
-        android:textSize="20sp"
-        android:typeface="serif"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_switch1"
-        app:layout_constraintTop_toBottomOf="@+id/text_state" />
-
     <TextView
         android:id="@+id/text_state"
         android:layout_width="254dp"
@@ -33,10 +18,36 @@
         android:text="未连接"
         android:textSize="20sp"
         android:typeface="serif"
-        app:layout_constraintBottom_toTopOf="@+id/btn_switch2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.206" />
+        app:layout_constraintVertical_bias="0.206"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    <TextView
+        android:id="@+id/text_dht11"
+        android:layout_width="254dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="48dp"
+        android:text="温湿度"
+        android:textSize="20sp"
+        android:typeface="serif"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_state" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="59dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="88dp"
+        android:text="测试"
+        android:textSize="20sp"
+        android:typeface="serif"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_dht11" />        />
 
     <Button
         android:id="@+id/btn_switch1"
@@ -44,30 +55,89 @@
         android:layout_height="84dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginEnd="63dp"
-        android:layout_marginRight="63dp"
-        android:layout_marginBottom="228dp"
+        android:layout_marginTop="124dp"
         android:text="开"
         android:textSize="20sp"
         android:typeface="serif"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_switch2"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_dht11" />
 
     <TextView
-        android:id="@+id/text_dht11"
-        android:layout_width="254dp"
-        android:layout_height="34dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="50dp"
-        android:text="温湿度"
+        android:id="@+id/textView2"
+        android:layout_width="74dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="192dp"
+        android:layout_marginLeft="192dp"
+        android:layout_marginTop="88dp"
+        android:text="楼上灯"
         android:textSize="20sp"
         android:typeface="serif"
-        app:layout_constraintBottom_toTopOf="@+id/btn_switch1"
+        app:layout_constraintStart_toStartOf="@+id/btn_switch1"
+        app:layout_constraintTop_toTopOf="@+id/text_dht11" />
+
+    <Button
+        android:id="@+id/btn_switch2"
+        android:layout_width="0dp"
+        android:layout_height="84dp"
+        android:layout_marginStart="192dp"
+        android:layout_marginLeft="192dp"
+        android:layout_marginTop="124dp"
+        android:text="开"
+        android:textSize="20sp"
+        android:typeface="serif"
+        app:layout_constraintStart_toStartOf="@+id/btn_switch1"
+        app:layout_constraintTop_toTopOf="@+id/text_dht11" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="95dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="132dp"
+        android:text="充电插座"
+        android:textSize="20sp"
+        android:typeface="serif"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.763" />
+        app:layout_constraintTop_toTopOf="@+id/btn_switch1" />
+
+    <Button
+        android:id="@+id/btn_switch3"
+        android:layout_width="0dp"
+        android:layout_height="84dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="164dp"
+        android:text="开"
+        android:textSize="20sp"
+        android:typeface="serif"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_switch1" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="54dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="188dp"
+        android:layout_marginLeft="188dp"
+        android:layout_marginTop="132dp"
+        android:text="待定"
+        android:textSize="20sp"
+        android:typeface="serif"
+        app:layout_constraintStart_toStartOf="@+id/btn_switch3"
+        app:layout_constraintTop_toTopOf="@+id/btn_switch2" />
+
+    <Button
+        android:id="@+id/btn_switch4"
+        android:layout_width="0dp"
+        android:layout_height="84dp"
+        android:layout_marginStart="188dp"
+        android:layout_marginLeft="188dp"
+        android:layout_marginTop="164dp"
+        android:text="开"
+        android:textSize="20sp"
+        android:typeface="serif"
+        app:layout_constraintStart_toStartOf="@+id/btn_switch3"
+        app:layout_constraintTop_toTopOf="@+id/btn_switch2" />
 
 </android.support.constraint.ConstraintLayout>
