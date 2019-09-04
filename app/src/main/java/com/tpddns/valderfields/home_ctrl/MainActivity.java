@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
         }
         /*  本地连接 */
+/*
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
+*/
 
         /*  上级路由连接 */
         new Thread(new Runnable() {
@@ -165,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                             out.write(getTemp1);
                             Thread.sleep(600);
                             out.write(getBuf1);
-                            Thread.sleep(400);
+                            Thread.sleep(500);
                             out.write(getBuf2);
                             Thread.sleep(400);
                             out.write(getBuf3);
