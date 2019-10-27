@@ -18,6 +18,8 @@ import java.util.Enumeration;
 import android.util.Log;
 import android.os.Handler;
 import android.content.Context;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     public int connextCnt = 0;
     public String ip; // = "192.168.0.43";
-    public int port = 54300;
+    public int port = 54200;
 
     byte[] getTemp1 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x01, (byte)0x05, (byte)0x00, (byte)0x00};
     byte[] getBuf1 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x01, (byte)0x03, (byte)0x00, (byte)0x00};
@@ -108,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 while(true) {
                     if (!connectFlag) {
                         tcp_connect_route();
+                        //tcp_connect_local();
                     } else {
                         try {
                             Thread.sleep(100);
@@ -163,17 +166,11 @@ public class MainActivity extends AppCompatActivity {
                         if (getDataFlag) {
                             getDataFlag = false;
 
-                            Thread.sleep(100);
-                            out.write(getTemp1);
-                            Thread.sleep(600);
-                            out.write(getBuf1);
-                            Thread.sleep(500);
-                            out.write(getBuf2);
-                            Thread.sleep(400);
-                            out.write(getBuf3);
-                            Thread.sleep(400);
-                            out.write(getBuf4);
-                            Thread.sleep(400);
+                            /* 每次建立连接都重新获取所有设备信息 */
+                            JSONObject json_data = new JSONObject();
+                            json_data.put("cmd", "GET ALL STATE");
+                            out.write(json_data.toString().getBytes());
+
                         } else {
                             Thread.sleep(100);
                         }
@@ -184,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-        btnSwitch[1].setOnClickListener(new View.OnClickListener() {
+    btnSwitch[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (connectFlag) {
@@ -310,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
         while(true) {
             String localIP = getLocalIpAddress();
             if (localIP.contains("192.168.0.") == true) {
-                ip = "192.168.0.43";
+                ip = "192.168.0.42";
             } else {
                 try {
                     InetAddress addr = java.net.InetAddress.getByName("valderfields.tpddns.cn");
@@ -342,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
     public void tcp_connect_local() {
         while (true) {
             try {
-                ip = "192.168.0.43";
+                ip = "192.168.0.40";
                 socketLocal = new Socket(ip, port);
                 if (socketLocal.isConnected()) {
                     socket = socketLocal;
@@ -409,9 +406,46 @@ public class MainActivity extends AppCompatActivity {
     public void tcp_recv() {
         while (true) {
             try {
-                byte[] buf = new byte[128];
+                byte[] buf = new byte[1024];
                 int len = in.read(buf);
                 //int id;
+
+                if (len > 0) {
+                    String str = new String(buf);
+                    Log.d(TAG, "fangying "+str);
+                    JSONObject jsonObject = new JSONObject(str);
+                    JSONArray arr = jsonObject.getJSONArray("dev");
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject dev = arr.getJSONObject(i);
+                        //int id = Integer.parseInt(dev.getString("id"));
+                        /* final类型可以在runOnUiThread中继续使用 */
+                        final int id = dev.getInt("id");
+
+                        /* 字符串比较必须用equals，用 == 可能会出错 */
+                        if (dev.getString("state").equals("on")) {
+                            Log.d(TAG, "fangying " + dev.getString("state"));
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run() {
+                                    btnSwitch[id].setText("开");
+                                    btnSwitch[id].setBackgroundColor(Color.parseColor("#FFD700"));
+                                    state[id] = 0x0;
+                                }
+                            });
+                        } else if (dev.getString("state").equals("off")) {
+                            Log.d(TAG, "fangying " + dev.getString("state"));
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run() {
+                                    btnSwitch[id].setText("关");
+                                    btnSwitch[id].setBackgroundColor(Color.parseColor("#ADD8E6"));
+                                    state[id] = 0x1;
+                                }
+                            });
+                        }
+                    }
+
+                /*
                 if (len > 0) {
                     if (buf[4] == 0x6) {
                         temp = (float) (buf[7]*10 + buf[8]) / 10;
@@ -446,10 +480,11 @@ public class MainActivity extends AppCompatActivity {
                                             btnSwitch[id].setBackgroundColor(Color.parseColor("#ADD8E6"));
                                         }
                                     });
-                                    state[id] = 0x1;     
+                                    state[id] = 0x1;
                                 break;
                         }
                     }
+                    */
                 } else {
                     textState.setText("未连接");
                     //connectFlag = false;
@@ -465,7 +500,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
+        /* 连接断开后把按键改成灰色 */
         runOnUiThread(new Runnable(){
             @Override
             public void run() {
