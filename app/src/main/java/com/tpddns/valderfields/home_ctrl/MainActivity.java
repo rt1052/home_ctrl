@@ -27,38 +27,23 @@ public class MainActivity extends AppCompatActivity {
     //public Button btnSwitch[4];
     //public int state[4] = {2};
     public  Button btnSwitch[] = new Button[12];
-    public byte state[] = new byte[]{(byte)0x2, (byte)0x2, (byte)0x2, (byte)0x2, (byte)0x2};
+    /* 设备的开关状态，有unknown off on 三种 */
+    public String[] dev_state = {"unknown", "unknown", "unknown", "unknown", "unknown", "unknown"};
 
+    /* tcp连接状态信息 */
     public TextView textState;
+    /* 传感器信息 */
     public TextView textTemp;
 
     public Socket socket, socketLocal, socketRemote;
 
+    /* tcp输入输出 */
     public OutputStream out;
     public InputStream in;
+
     public boolean connectFlag = false;
-    public boolean getDataFlag = false;
 
-    public int connextCnt = 0;
-    public String ip; // = "192.168.0.43";
     public int port = 54200;
-
-    byte[] getTemp1 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x01, (byte)0x05, (byte)0x00, (byte)0x00};
-    byte[] getBuf1 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x01, (byte)0x03, (byte)0x00, (byte)0x00};
-    byte[] openBuf1 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x01, (byte)0x01, (byte)0x01, (byte)0x00};
-    byte[] closeBuf1 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x01, (byte)0x01, (byte)0x00, (byte)0x00};
-
-    byte[] getBuf2 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x02, (byte)0x03, (byte)0x00, (byte)0x00};
-    byte[] openBuf2 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x02, (byte)0x01, (byte)0x01, (byte)0x00};
-    byte[] closeBuf2 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x02, (byte)0x01, (byte)0x00, (byte)0x00};
-
-    byte[] getBuf3 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x03, (byte)0x03, (byte)0x00, (byte)0x00};
-    byte[] openBuf3 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x03, (byte)0x01, (byte)0x01, (byte)0x00};
-    byte[] closeBuf3 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x03, (byte)0x01, (byte)0x00, (byte)0x00};
-
-    byte[] getBuf4 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x04, (byte)0x03, (byte)0x00, (byte)0x00};
-    byte[] openBuf4 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x04, (byte)0x01, (byte)0x01, (byte)0x00};
-    byte[] closeBuf4 =new byte[]{(byte)0x42, (byte)0x05, (byte)0x04, (byte)0x01, (byte)0x00, (byte)0x00};
 
     public float temp;
     public int humi;
@@ -78,30 +63,11 @@ public class MainActivity extends AppCompatActivity {
 
         //textState.setBackgroundColor(Color.RED);
 
-        //允许主线程操作
+        /* 允许主线程操作 */
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        /*  本地连接 */
-/*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true) {
-                    if (!connectFlag) {
-                        tcp_connect_local();
-                    } else {
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception e) {
-
-                        }
-                    }
-                }
-            }
-        }).start();
-*/
 
         /*  上级路由连接 */
         new Thread(new Runnable() {
@@ -110,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 while(true) {
                     if (!connectFlag) {
                         tcp_connect_route();
-                        //tcp_connect_local();
                     } else {
                         try {
                             Thread.sleep(100);
@@ -140,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
+        /* tcp接收线程 */
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -157,51 +123,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                while(true) {
-                    try {
-                        if (getDataFlag) {
-                            getDataFlag = false;
-
-                            /* 每次建立连接都重新获取所有设备信息 */
-                            JSONObject json_data = new JSONObject();
-                            json_data.put("cmd", "GET ALL STATE");
-                            out.write(json_data.toString().getBytes());
-
-                        } else {
-                            Thread.sleep(100);
-                        }
-                    } catch (Exception e) {
-
-                    }
-                }
-            }
-        }).start();
-
-    btnSwitch[1].setOnClickListener(new View.OnClickListener() {
+        btnSwitch[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (connectFlag) {
-                    try{
-                        switch (state[1]) {
-                        case 0x0:
-                            out.write(openBuf1);
-                            break;
-                        case 0x1:
-                            out.write(closeBuf1);
-                            break;
-                        case 0x2:
-                            out.write(getBuf1);
-                            break;
-                        }
-                        state[1] = 0x2;
-                        btnSwitch[1].setBackgroundColor(Color.parseColor("#8C8C8C"));
-                    } catch (Exception e) {
-
-                    }
+                    button_click_event(1);
                 }
             }
         });
@@ -210,23 +136,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (connectFlag) {
-                    try{
-                        switch (state[2]) {
-                        case 0x0:
-                            out.write(openBuf2);
-                            break;
-                        case 0x1:
-                            out.write(closeBuf2);
-                            break;
-                        case 0x2:
-                            out.write(getBuf2);
-                            break;
-                        }
-                        state[2] = 0x2;
-                        btnSwitch[2].setBackgroundColor(Color.parseColor("#8C8C8C"));
-                    } catch (Exception e) {
-
-                    }
+                    button_click_event(2);
                 }
             }
         });
@@ -235,23 +145,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (connectFlag) {
-                    try{
-                        switch (state[3]) {
-                            case 0x0:
-                                out.write(openBuf3);
-                                break;
-                            case 0x1:
-                                out.write(closeBuf3);
-                                break;
-                            case 0x2:
-                                out.write(getBuf3);
-                                break;
-                        }
-                        state[3] = 0x2;
-                        btnSwitch[3].setBackgroundColor(Color.parseColor("#8C8C8C"));
-                    } catch (Exception e) {
-
-                    }
+                    button_click_event(3);
                 }
             }
         });
@@ -260,23 +154,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (connectFlag) {
-                    try{
-                        switch (state[4]) {
-                            case 0x0:
-                                out.write(openBuf4);
-                                break;
-                            case 0x1:
-                                out.write(closeBuf4);
-                                break;
-                            case 0x2:
-                                out.write(getBuf4);
-                                break;
-                        }
-                        state[4] = 0x2;
-                        btnSwitch[4].setBackgroundColor(Color.parseColor("#8C8C8C"));
-                    } catch (Exception e) {
-
-                    }
+                    button_click_event(4);
                 }
             }
         });
@@ -303,73 +181,30 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    public void tcp_connect() {
-        while(true) {
-            String localIP = getLocalIpAddress();
-            if (localIP.contains("192.168.0.") == true) {
-                ip = "192.168.0.42";
-            } else {
-                try {
-                    InetAddress addr = java.net.InetAddress.getByName("valderfields.tpddns.cn");
-                    ip = addr.getHostAddress();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+    /* 获取所有设备信息 */
+    public void get_device_list() {
+        try {
+            JSONObject json_data = new JSONObject();
+            json_data.put("cmd", "GET ALL STATE");
+            out.write(json_data.toString().getBytes());
+        } catch (Exception e) {
 
-            try {
-                socket = new Socket(ip, port);
-                if (socket.isConnected()) {
-                    out = socket.getOutputStream();
-                    in = socket.getInputStream();
-                    connectFlag = true;
-                    getDataFlag = true;
-                    textState.setText("已连接");
-                    break;
-                } else {
-                    Thread.sleep(200);
-                }
-
-            } catch (Exception e) {
-
-            }
         }
     }
 
-    public void tcp_connect_local() {
-        while (true) {
-            try {
-                ip = "192.168.0.40";
-                socketLocal = new Socket(ip, port);
-                if (socketLocal.isConnected()) {
-                    socket = socketLocal;
-                    out = socket.getOutputStream();
-                    in = socket.getInputStream();
-                    connectFlag = true;
-                    getDataFlag = true;
-                    textState.setText("已连接");
-                    break;
-                } else {
-                    Thread.sleep(200);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+    /* 通过路由器内网转发 */
     public void tcp_connect_route() {
         while (true) {
             try {
-                ip = "192.168.1.2";
+                String ip = "192.168.1.2";
                 socketLocal = new Socket(ip, port);
                 if (socketLocal.isConnected()) {
                     socket = socketLocal;
                     out = socket.getOutputStream();
                     in = socket.getInputStream();
                     connectFlag = true;
-                    getDataFlag = true;
                     textState.setText("已连接");
+                    get_device_list();
                     break;
                 } else {
                     Thread.sleep(200);
@@ -380,19 +215,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /* 外网 */
     public void tcp_connect_remote() {
         while(true) {
             try {
                 InetAddress addr = java.net.InetAddress.getByName("valderfields.tpddns.cn");
-                ip = addr.getHostAddress();
+                String ip = addr.getHostAddress();
                 socketRemote = new Socket(ip, port);
                 if (socketRemote.isConnected()) {
                     socket = socketRemote;
                     out = socket.getOutputStream();
                     in = socket.getInputStream();
                     connectFlag = true;
-                    getDataFlag = true;
                     textState.setText("已连接");
+                    get_device_list();
                     break;
                 } else {
                     Thread.sleep(200);
@@ -400,6 +236,64 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /* 点击按键发送json数据 */
+    public void button_click_event(int id) {
+        String cmd = "GET STATE REQUEST";
+        String state = dev_state[id];
+
+        btnSwitch[id].setBackgroundColor(Color.parseColor("#8C8C8C"));
+        switch (state) {
+            case "on":
+                state = "off";
+                cmd = "SET STATE REQUEST";
+                break;
+            case "off":
+                state = "on";
+                cmd = "SET STATE REQUEST";
+                break;
+            case "unknown":
+                state = "unknown";
+                cmd = "GET STATE REQUEST";
+                break;
+
+        }
+
+        try {
+            JSONObject json_data = new JSONObject();
+            json_data.put("cmd", cmd);
+            json_data.put("state", state);
+            json_data.put("id", id);
+            out.write(json_data.toString().getBytes());
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void set_button_state(final int id, String state) {
+        dev_state[id] = state;
+        /* 字符串比较必须用equals，用 == 可能会出错 */
+        switch(state) {
+            case "on":
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnSwitch[id].setText("开");
+                        btnSwitch[id].setBackgroundColor(Color.parseColor("#FFD700"));
+                    }
+                });
+                break;
+            case "off":
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnSwitch[id].setText("关");
+                        btnSwitch[id].setBackgroundColor(Color.parseColor("#ADD8E6"));
+                    }
+                });
+                break;
         }
     }
 
@@ -408,93 +302,36 @@ public class MainActivity extends AppCompatActivity {
             try {
                 byte[] buf = new byte[1024];
                 int len = in.read(buf);
-                //int id;
 
                 if (len > 0) {
                     String str = new String(buf);
                     Log.d(TAG, "fangying "+str);
                     JSONObject jsonObject = new JSONObject(str);
-                    JSONArray arr = jsonObject.getJSONArray("dev");
-                    for (int i = 0; i < arr.length(); i++) {
-                        JSONObject dev = arr.getJSONObject(i);
-                        //int id = Integer.parseInt(dev.getString("id"));
-                        /* final类型可以在runOnUiThread中继续使用 */
+                    String type = jsonObject.getString("type");
+
+                    /* 根据不同的json类型进行不同处理 */
+                    if (type.equals("dev info")) {
+                        JSONObject dev =jsonObject.getJSONObject("dev");
                         final int id = dev.getInt("id");
-
-                        /* 字符串比较必须用equals，用 == 可能会出错 */
-                        if (dev.getString("state").equals("on")) {
+                        set_button_state(id, dev.getString("state"));
+                    } else if (type.equals("dev list")) {
+                        JSONArray arr = jsonObject.getJSONArray("dev");
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject dev = arr.getJSONObject(i);
+                            /* final类型可以在runOnUiThread中继续使用 */
+                            final int id = dev.getInt("id");
                             Log.d(TAG, "fangying " + dev.getString("state"));
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run() {
-                                    btnSwitch[id].setText("开");
-                                    btnSwitch[id].setBackgroundColor(Color.parseColor("#FFD700"));
-                                    state[id] = 0x0;
-                                }
-                            });
-                        } else if (dev.getString("state").equals("off")) {
-                            Log.d(TAG, "fangying " + dev.getString("state"));
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run() {
-                                    btnSwitch[id].setText("关");
-                                    btnSwitch[id].setBackgroundColor(Color.parseColor("#ADD8E6"));
-                                    state[id] = 0x1;
-                                }
-                            });
+                            set_button_state(id, dev.getString("state"));
                         }
                     }
-
-                /*
-                if (len > 0) {
-                    if (buf[4] == 0x6) {
-                        temp = (float) (buf[7]*10 + buf[8]) / 10;
-                        humi = buf[5];
-                        //textTemp.setText(String.valueOf(temp) + "℃" + "    " + String.valueOf(humi) + "%RH");
-
-                        runOnUiThread(new Runnable(){
-                            @Override
-                            public void run() {
-                                textTemp.setText(String.valueOf(temp) + "℃" + "    " + String.valueOf(humi) + "%RH");
-                            }
-                        });
-
-                    } else {
-                        final int id = buf[3];
-                        switch (buf[5]) {
-                            case 0x0:
-                                    runOnUiThread(new Runnable(){
-                                        @Override
-                                        public void run() {
-                                            btnSwitch[id].setText("开");
-                                            btnSwitch[id].setBackgroundColor(Color.parseColor("#FFD700"));
-                                        }
-                                    });
-                                    state[id] = 0x0;
-                                break;
-                            case 0x1:
-                                    runOnUiThread(new Runnable(){
-                                        @Override
-                                        public void run() {
-                                            btnSwitch[id].setText("关");
-                                            btnSwitch[id].setBackgroundColor(Color.parseColor("#ADD8E6"));
-                                        }
-                                    });
-                                    state[id] = 0x1;
-                                break;
-                        }
-                    }
-                    */
                 } else {
                     textState.setText("未连接");
-                    //connectFlag = false;
-                    //socket.close();
                     break;
                 }
             } catch (Exception e) {
-                Log.i(TAG, "fangying yichang");
+                //Log.i(TAG, "fangying yichang");
                 Log.d(TAG, "fangying yichang");
-                Log.e(TAG, "fangying yichang", e);
+                //Log.e(TAG, "fangying yichang", e);
                 textState.setText("异常");
                 break;
             }
@@ -505,11 +342,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 btnSwitch[1].setBackgroundColor(Color.parseColor("#8C8C8C"));
-                state[1] = 0x2;
+                dev_state[1] = "unknown";
                 btnSwitch[2].setBackgroundColor(Color.parseColor("#8C8C8C"));
-                state[2] = 0x2;
+                dev_state[2] = "unknown";
                 btnSwitch[3].setBackgroundColor(Color.parseColor("#8C8C8C"));
-                state[3] = 0x2;
+                dev_state[3] = "unknown";
+                btnSwitch[4].setBackgroundColor(Color.parseColor("#8C8C8C"));
+                dev_state[4] = "unknown";
             }
         });
 
