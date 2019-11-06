@@ -8,137 +8,296 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/card4"
+        android:layout_width="165dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="480dp"
+        app:cardCornerRadius="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/card4_text1"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="待定"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <TextView
+            android:id="@+id/card4_text2"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <TextView
+            android:id="@+id/card4_text3"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="70dp"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <TextView
+            android:id="@+id/card4_text4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="125dp"
+            android:layout_marginTop="-10dp"
+            android:text="..."
+            android:textSize="30sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <ImageView
+            android:id="@+id/card4_image"
+            android:layout_width="33dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="35dp"
+            app:layout_constraintStart_toStartOf="@+id/card4"
+            app:layout_constraintTop_toTopOf="@+id/card4"
+            app:srcCompat="@drawable/unknown" />
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card3"
+        android:layout_width="165dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="185dp"
+        android:layout_marginLeft="185dp"
+        android:layout_marginTop="240dp"
+        app:cardCornerRadius="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/card3_text1"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="充电插座"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <TextView
+            android:id="@+id/card3_text2"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <TextView
+            android:id="@+id/card3_text3"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="70dp"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <TextView
+            android:id="@+id/card3_text4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="125dp"
+            android:layout_marginTop="-10dp"
+            android:text="..."
+            android:textSize="30sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <ImageView
+            android:id="@+id/card3_image"
+            android:layout_width="33dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="35dp"
+            app:layout_constraintStart_toStartOf="@+id/card3"
+            app:layout_constraintTop_toTopOf="@+id/card3"
+            app:srcCompat="@drawable/unknown" />
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card2"
+        android:layout_width="165dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="240dp"
+        app:cardCornerRadius="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/card2_text1"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="楼上灯"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <TextView
+            android:id="@+id/card2_text2"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <TextView
+            android:id="@+id/card2_text3"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="70dp"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <TextView
+            android:id="@+id/card2_text4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="125dp"
+            android:layout_marginTop="-10dp"
+            android:text="..."
+            android:textSize="30sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
+
+        <ImageView
+            android:id="@+id/card2_image"
+            android:layout_width="33dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="35dp"
+            app:layout_constraintStart_toStartOf="@+id/card2"
+            app:layout_constraintTop_toTopOf="@+id/card2"
+            app:srcCompat="@drawable/unknown" />
+
+    </android.support.v7.widget.CardView>
+
     <TextView
         android:id="@+id/text_state"
-        android:layout_width="254dp"
+        android:layout_width="114dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="40dp"
-        android:layout_marginBottom="125dp"
         android:text="未连接"
         android:textSize="20sp"
         android:typeface="serif"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.206"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
-    <TextView
-        android:id="@+id/text_dht11"
-        android:layout_width="254dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="48dp"
-        android:text="温湿度"
-        android:textSize="20sp"
-        android:typeface="serif"
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card1"
+        android:layout_width="165dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="360dp"
+        app:cardCornerRadius="12dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/text_state" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="59dp"
-        android:layout_height="27dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:layout_marginTop="188dp"
-        android:text="测试"
-        android:textSize="20sp"
-        android:typeface="serif"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/text_dht11" />        />
+        <TextView
+            android:id="@+id/card1_text1"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="测试"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
 
-    <Button
-        android:id="@+id/btn_switch1"
-        android:layout_width="0dp"
-        android:layout_height="84dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="228dp"
-        android:text="开"
-        android:textSize="20sp"
-        android:typeface="serif"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/text_dht11" />
+        <TextView
+            android:id="@+id/card1_text2"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:textSize="18sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="74dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="188dp"
-        android:layout_marginLeft="188dp"
-        android:layout_marginTop="188dp"
-        android:text="楼上灯"
-        android:textSize="20sp"
-        android:typeface="serif"
-        app:layout_constraintStart_toStartOf="@+id/btn_switch1"
-        app:layout_constraintTop_toTopOf="@+id/text_dht11" />
+        <TextView
+            android:id="@+id/card1_text3"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="70dp"
+            android:textColor="#a6a4a4"
+            android:textSize="16sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
 
-    <Button
-        android:id="@+id/btn_switch2"
-        android:layout_width="0dp"
-        android:layout_height="84dp"
-        android:layout_marginStart="188dp"
-        android:layout_marginLeft="188dp"
-        android:layout_marginTop="228dp"
-        android:text="开"
-        android:textSize="20sp"
-        android:typeface="serif"
-        app:layout_constraintStart_toStartOf="@+id/btn_switch1"
-        app:layout_constraintTop_toTopOf="@+id/text_dht11" />
+        <TextView
+            android:id="@+id/card1_text4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="125dp"
+            android:layout_marginTop="-10dp"
+            android:text="..."
+            android:textSize="30sp"
+            android:typeface="serif"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="95dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginLeft="36dp"
-        android:layout_marginTop="96dp"
-        android:text="充电插座"
-        android:textSize="20sp"
-        android:typeface="serif"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btn_switch1" />
+        <ImageView
+            android:id="@+id/card1_image"
+            android:layout_width="33dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="35dp"
+            app:layout_constraintStart_toStartOf="@+id/card1"
+            app:layout_constraintTop_toTopOf="@+id/card1"
+            app:srcCompat="@drawable/unknown" />
 
-    <Button
-        android:id="@+id/btn_switch3"
-        android:layout_width="0dp"
-        android:layout_height="84dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="132dp"
-        android:text="开"
-        android:textSize="20sp"
-        android:typeface="serif"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btn_switch1" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="54dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="192dp"
-        android:layout_marginLeft="192dp"
-        android:layout_marginTop="96dp"
-        android:text="待定"
-        android:textSize="20sp"
-        android:typeface="serif"
-        app:layout_constraintStart_toStartOf="@+id/btn_switch3"
-        app:layout_constraintTop_toTopOf="@+id/btn_switch2" />
-
-    <Button
-        android:id="@+id/btn_switch4"
-        android:layout_width="0dp"
-        android:layout_height="84dp"
-        android:layout_marginStart="188dp"
-        android:layout_marginLeft="188dp"
-        android:layout_marginTop="132dp"
-        android:text="开"
-        android:textSize="20sp"
-        android:typeface="serif"
-        app:layout_constraintStart_toStartOf="@+id/btn_switch3"
-        app:layout_constraintTop_toTopOf="@+id/btn_switch2" />
+    </android.support.v7.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>
