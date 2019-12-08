@@ -1,5 +1,6 @@
 package com.tpddns.valderfields.home_ctrl;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public CardView card[] = new CardView[12];
     public TextView text2[] = new TextView[12];
     public TextView text3[] = new TextView[12];
+    public TextView text4[] = new TextView[12];
     public ImageView image[] = new ImageView[12];
 
     /* 设备的开关状态，有unknown off on 三种 */
@@ -61,16 +63,21 @@ public class MainActivity extends AppCompatActivity {
         card[2] = (CardView) findViewById(R.id.card2);
         card[3] = (CardView) findViewById(R.id.card3);
         card[4] = (CardView) findViewById(R.id.card4);
-
+        /* 开关状态 */
         text2[1] = (TextView) findViewById(R.id.card1_text2);
         text2[2] = (TextView) findViewById(R.id.card2_text2);
         text2[3] = (TextView) findViewById(R.id.card3_text2);
         text2[4] = (TextView) findViewById(R.id.card4_text2);
-
+        /* 传感器信息 */
         text3[1] = (TextView) findViewById(R.id.card1_text3);
         text3[2] = (TextView) findViewById(R.id.card2_text3);
         text3[3] = (TextView) findViewById(R.id.card3_text3);
         text3[4] = (TextView) findViewById(R.id.card4_text3);
+        /* 查看详情 */
+        text4[1] = (TextView) findViewById(R.id.card1_text4);
+        text4[2] = (TextView) findViewById(R.id.card2_text4);
+        text4[3] = (TextView) findViewById(R.id.card3_text4);
+        text4[4] = (TextView) findViewById(R.id.card4_text4);
 
         image[1] = (ImageView) findViewById(R.id.card1_image);
         image[2] = (ImageView) findViewById(R.id.card2_image);
@@ -174,6 +181,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        text4[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /* 获取本地ip地址 */
@@ -260,7 +275,6 @@ public class MainActivity extends AppCompatActivity {
         String cmd = "GET STATE REQUEST";
         String state = dev_state[id];
 
-        image[id].setImageDrawable(getResources().getDrawable(R.drawable.unknown));
         switch (state) {
             case "on":
                 state = "off";
@@ -270,11 +284,14 @@ public class MainActivity extends AppCompatActivity {
                 state = "on";
                 cmd = "SET STATE REQUEST";
                 break;
+            case "update":
+                state = "unknown";
+                cmd = "GET STATE REQUEST";
+                break;
             case "unknown":
                 state = "unknown";
                 cmd = "GET STATE REQUEST";
                 break;
-
         }
 
         try {
@@ -286,6 +303,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
 
         }
+
+        /* 每次发送后把状态设为unkonwn */
+        image[id].setImageDrawable(getResources().getDrawable(R.drawable.unknown));
+        dev_state[id] = "unknown";
     }
 
     public void set_card_state(final int id, String state, final int humidity, double temperature) {
@@ -311,6 +332,15 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         text2[id].setText("关");
                         image[id].setImageDrawable(getResources().getDrawable(R.drawable.off));
+                    }
+                });
+                break;
+            case "update":
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        text2[id].setText("更新中");
+                        image[id].setImageDrawable(getResources().getDrawable(R.drawable.update));
                     }
                 });
                 break;
